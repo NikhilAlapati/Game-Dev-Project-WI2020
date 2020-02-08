@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class HealthBar : MonoBehaviour
 {
+    private Player player;
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GetComponent<Player>();
     }
 
     // Update is called once per frame
