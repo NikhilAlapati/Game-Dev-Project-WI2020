@@ -50,10 +50,16 @@ public class Player : MonoBehaviour
         team.addMember();
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        setTeam(collision.gameObject.GetComponent<TeamAssignment>().teamNumber);
+        Debug.Log("Setting team");
+    }
+
 
     public void dropOut()
     {
-        team.removeMember();
+        //team.removeMember();
         GetComponentInParent<PlayerManager>().DropPlayer(this.playerNumber);
     }
 
