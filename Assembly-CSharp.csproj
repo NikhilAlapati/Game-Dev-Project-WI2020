@@ -65,7 +65,6 @@
     <Compile Include="Assets\Scripts\Player\PlayerManager.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\Player\Team.cs" />
-    <Compile Include="Assets\Scripts\Player\TeamAssignment.cs" />
     <Compile Include="Assets\Scripts\ShootingController.cs" />
     <Compile Include="Assets\Scripts\Snowball.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">

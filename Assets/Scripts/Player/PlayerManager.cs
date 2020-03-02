@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -8,8 +9,15 @@ public class PlayerManager : MonoBehaviour
     Player[] players;
 
     // just left and right team at the moment
-    private const int MAX_TEAMS = 2;
-    public Dictionary<int, Team> teams;
+    //private const int MAX_TEAMS = 2;
+    public GameObject teamHolder;
+    private Team[] teams;
+
+    bool isCountDown = false;
+    int ticksPerSecond = 60;
+    int countDownTicks = 0;
+    int countDownSeconds = 3;
+    public Text countDownNumber;
 
     // a mapping of controllers to players
     // controllerMappings[controllerNumber] = playerNumber
@@ -18,6 +26,8 @@ public class PlayerManager : MonoBehaviour
     // Singleton implementation
     private static PlayerManager _instance;
     public static PlayerManager Instance { get { return _instance; } }
+
+    public int roundCount = 0;
 
     private void Awake()
     {
@@ -30,7 +40,10 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Assert(teams.Count > 1, "Must have more than one team for a game");
+        teams = teamHolder.GetComponentsInChildren<Team>();
+        Debug.Assert(teams.Length > 1, "Must have more than one team for a game");
+        for (int i = 0; i < teams.Length; i++)
+            teams[i].teamNumber = i;
 
         players = GetComponentsInChildren<Player>();
         // ensure there are no active players in the beginning
@@ -45,18 +58,50 @@ public class PlayerManager : MonoBehaviour
         for (int controllerNum = 1; controllerNum < MAX_PLAYERS + 1; controllerNum++)
         {
             // if controller is unassigned to a player and has pressed the downface button
-            if (controllerMappings[controllerNum] == 0 && Input.GetButtonDown("P" + controllerNum + "DownFace"))
+            if (controllerMappings[controllerNum] == 0
+                && Input.GetButtonDown("P" + controllerNum + "DownFace"))
                 AssignPlayer(controllerNum);
         }
+
         if (Input.GetKeyDown(KeyCode.Space))
-            StartNewRound();
+            StartNewRoundTimer();
+
+        CountDownTimer();
+    }
+
+    private void CountDownTimer()
+    {
+        if (!isCountDown)
+            return;
+
+        ++countDownTicks;
+        if (countDownTicks >= ticksPerSecond)
+        {
+            countDownTicks = 0;
+            --countDownSeconds;
+
+            if (countDownSeconds > 0)
+                countDownNumber.text = countDownSeconds.ToString();
+
+            else if (countDownSeconds == 0)
+            {
+                countDownNumber.text = "Go!";
+                StartNewRound();
+            }
+            else
+            {
+                countDownNumber.text = "";
+                isCountDown = false;
+            }
+        }
     }
 
     private void AssignPlayer(int controllerNumber)
     {
-        for (int playerNumber = 0; playerNumber < MAX_PLAYERS; playerNumber++)
+        for (int playerNumber = 0; playerNumber < players.Length; playerNumber++)
         {
             // if player is unassigned
+            Debug.Log(playerNumber + " is the playerNumber");
             if (!players[playerNumber].gameObject.activeInHierarchy)
             {
                 // activate the player object
@@ -86,26 +131,46 @@ public class PlayerManager : MonoBehaviour
         return teams[teamNumber];
     }
 
+    public void StartNewRoundTimer()
+    {
+        countDownSeconds = 3;
+        countDownNumber.text = countDownSeconds.ToString();
+        isCountDown = true;
+    }
+
     public void StartNewRound()
     {
-        foreach (KeyValuePair<int, Team> team in teams)
-            team.Value.activateTeam();
+        ++roundCount;
+        Debug.Log("Round " + roundCount + " has begun");
+        ReviveAllPlayers();
+        foreach (Team team in teams)
+            team.activateTeam();
+    }
+
+    public void ReviveAllPlayers()
+    {
+        foreach(Player player in players)
+        {
+            player.revivePlayer();
+        }
     }
 
     public void TeamLostRound(int loserNumber)
     {
         int teamsRemaining = 0;
         int winningTeam = -1;
-        foreach (KeyValuePair<int, Team> team in teams) { 
-            if (team.Value.isTeamActive())
+        foreach (Team team in teams) { 
+            if (team.isTeamActive())
             {
+                Debug.Log("team " + team.teamNumber + " is active");
                 ++teamsRemaining;
-                winningTeam = team.Key;
+                winningTeam = team.teamNumber;
             }
         }
-
+        Debug.Log("There are a total of " + teams.Length + " teams and there are " + teamsRemaining + " teams remaining");
         if (teamsRemaining == 1)
         {
+            Debug.Log("Team " + winningTeam + " has won");
             teams[winningTeam].teamWonRound();
         }
     }

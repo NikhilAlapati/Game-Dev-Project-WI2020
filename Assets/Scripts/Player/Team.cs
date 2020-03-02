@@ -39,9 +39,11 @@ public class Team : MonoBehaviour
     {
         ++totalMembers;
     }
-    public void removeMember()
+    public void removeMember(Player player)
     {
         --totalMembers;
+        if (player.isAlive)
+            --activeMembers;
     }
     // call when a round starts
     public void activateTeam()

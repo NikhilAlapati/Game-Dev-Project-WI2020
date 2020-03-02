@@ -12,7 +12,7 @@ public class PlayerManagerEditor : Editor
         PlayerManager myScript = (PlayerManager)target;
         if (GUILayout.Button("Start New Round"))
         {
-            myScript.StartNewRound();
+            myScript.StartNewRoundTimer();
         }
     }
 }
