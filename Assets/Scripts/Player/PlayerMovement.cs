@@ -26,32 +26,20 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown(playerParent.getInputName(Player.InputName.LeftFace)))
-            Debug.Log(playerParent.getInputName(Player.InputName.LeftFace) + " was pressed!");
-
-        if (Input.GetButtonDown(playerParent.getInputName(Player.InputName.RightFace)))
-            Debug.Log(playerParent.getInputName(Player.InputName.RightFace) + " was pressed!");
-
-        if (Input.GetButtonDown(playerParent.getInputName(Player.InputName.TopFace)))
-            Debug.Log(playerParent.getInputName(Player.InputName.TopFace) + " was pressed!");
-
-        if (Input.GetButtonDown(playerParent.getInputName(Player.InputName.DownFace)))
-            Debug.Log(playerParent.getInputName(Player.InputName.DownFace) + " was pressed!");
-
         if (Input.GetKeyDown(KeyCode.Space))
             onSnow = !onSnow;
 
         float actualSpeed;
         if (onSnow)
         {
-            moveX = Input.GetAxisRaw(playerParent.getInputName(Player.InputName.Horizontal));
-            moveY = Input.GetAxisRaw(playerParent.getInputName(Player.InputName.Vertical));
+            moveX = Input.GetAxisRaw(playerParent.getInputName(Player.InputName.LeftHorizontal));
+            moveY = Input.GetAxisRaw(playerParent.getInputName(Player.InputName.LeftVertical));
             actualSpeed = speedOnSnow;
         }
         else
         {
-            moveX = Input.GetAxis(playerParent.getInputName(Player.InputName.Horizontal));
-            moveY = Input.GetAxis(playerParent.getInputName(Player.InputName.Vertical));
+            moveX = Input.GetAxis(playerParent.getInputName(Player.InputName.LeftHorizontal));
+            moveY = Input.GetAxis(playerParent.getInputName(Player.InputName.LeftVertical));
 
             //moveY = Input.GetAxis("Vertical");
             actualSpeed = speedOnIce;

@@ -1,24 +1,36 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-
-    private const int MAX_PLAYERS = 16;
+    private const int MAX_PLAYERS = 8;
     // all the child objects with player components
     Player[] players;
 
     // just left and right team at the moment
     private const int MAX_TEAMS = 2;
-    Team[] teams = new Team[MAX_TEAMS];
+    public Dictionary<int, Team> teams;
 
     // a mapping of controllers to players
     // controllerMappings[controllerNumber] = playerNumber
     int[] controllerMappings = new int[MAX_PLAYERS+1];
+    
+    // Singleton implementation
+    private static PlayerManager _instance;
+    public static PlayerManager Instance { get { return _instance; } }
+
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
+            Destroy(this.gameObject);
+        else
+            _instance = this;
+    }
+    // End of Singleton Implementation
 
     void Start()
     {
-        for (int i = 0; i < MAX_TEAMS; i++)
-            teams[i] = new Team(this, i);
+        Debug.Assert(teams.Count > 1, "Must have more than one team for a game");
 
         players = GetComponentsInChildren<Player>();
         // ensure there are no active players in the beginning
@@ -37,18 +49,16 @@ public class PlayerManager : MonoBehaviour
                 AssignPlayer(controllerNum);
         }
         if (Input.GetKeyDown(KeyCode.Space))
-            StartRound();
+            StartNewRound();
     }
 
     private void AssignPlayer(int controllerNumber)
     {
-        Debug.Log("assigning player");
         for (int playerNumber = 0; playerNumber < MAX_PLAYERS; playerNumber++)
         {
             // if player is unassigned
             if (!players[playerNumber].gameObject.activeInHierarchy)
             {
-                Debug.Log("Player Assigned!");
                 // activate the player object
                 players[playerNumber].gameObject.SetActive(true);
                 // assign player playerNumber and controllerNumber
@@ -76,21 +86,21 @@ public class PlayerManager : MonoBehaviour
         return teams[teamNumber];
     }
 
-    private void StartRound()
+    public void StartNewRound()
     {
-        foreach (Team team in teams)
-            team.activateTeam();
+        foreach (KeyValuePair<int, Team> team in teams)
+            team.Value.activateTeam();
     }
 
     public void TeamLostRound(int loserNumber)
     {
         int teamsRemaining = 0;
         int winningTeam = -1;
-        for (int i = 0; i < teams.Length; i++) {
-            if (teams[i].isTeamActive())
+        foreach (KeyValuePair<int, Team> team in teams) { 
+            if (team.Value.isTeamActive())
             {
                 ++teamsRemaining;
-                winningTeam = i;
+                winningTeam = team.Key;
             }
         }
 

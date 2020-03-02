@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
     private int playerNumber { get; set; }
     // chosen by the player
     private int teamNumber { get; set; }
-    private Team team;
+    private Team currentTeam;
 
     private bool isAlive = true;
 
@@ -26,8 +26,8 @@ public class Player : MonoBehaviour
     {
         if (Input.GetButtonDown(getInputName(InputName.RightFace)))
             dropOut();
-        if (Input.GetButtonDown(getInputName(InputName.TopFace)))
-            setTeam(1);
+        /*if (Input.GetButtonDown(getInputName(InputName.TopFace)))
+            setTeam(1);*/
         if (Input.GetKeyDown(KeyCode.K))
             killPlayer();
     }
@@ -35,7 +35,9 @@ public class Player : MonoBehaviour
     public enum InputName
     {
         LeftFace, RightFace, TopFace, DownFace,
-        Horizontal, Vertical
+        LeftHorizontal, LeftVertical,
+        RightHorizontal, RightVertical,
+        RightBumper
     }
 
     public string getInputName(InputName inputName)
@@ -43,17 +45,29 @@ public class Player : MonoBehaviour
         return "P" + this.controllerNumber + inputName.ToString();
     }
 
-    public void setTeam(int teamNumber)
+    public void setTeam(Team team)
     {
-        this.teamNumber = teamNumber;
-        team = GetComponentInParent<PlayerManager>().GetTeam(teamNumber);
+        this.teamNumber = team.teamNumber;
+        GetComponent<Renderer>().material.color = team.teamColor;
+        team = GetComponentInParent<PlayerManager>().GetTeam(this.teamNumber);
         team.addMember();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        setTeam(collision.gameObject.GetComponent<TeamAssignment>().teamNumber);
-        Debug.Log("Setting team");
+        Debug.Log("2d collision trigger enter");
+        Team teamAssignment = collision.gameObject.GetComponent<Team>();
+
+        if (teamAssignment != null && teamAssignment != currentTeam)
+            setTeam(collision.gameObject.GetComponent<Team>());
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Snowball snowBall = collision.gameObject.GetComponent<Snowball>();
+        if (snowBall != null)
+            damagePlayer(snowBall.damage);
+
     }
 
 
@@ -108,14 +122,15 @@ public class Player : MonoBehaviour
     private void killPlayer()
     {
         Debug.Log("Player " + this.playerNumber + " is dead");
-        team.memberDied();
+        currentTeam.memberDied();
         // Play death animation
         // Remove object
+        gameObject.SetActive(false);
     }
 
     private void revivePlayer()
     {
-        team.memberRevived();
+        currentTeam.memberRevived();
         // Set health to above 0
     }
 

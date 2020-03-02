@@ -181,6 +181,135 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &302777431
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 302777435}
+  - component: {fileID: 302777434}
+  - component: {fileID: 302777433}
+  - component: {fileID: 302777437}
+  - component: {fileID: 302777432}
+  - component: {fileID: 302777436}
+  m_Layer: 0
+  m_Name: Sphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!58 &302777432
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302777431}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
+--- !u!23 &302777433
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302777431}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &302777434
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302777431}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &302777435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302777431}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.56, y: -0.09, z: 0}
+  m_LocalScale: {x: 0.50873846, y: 0.50873846, z: 0.50873846}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &302777436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302777431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6b19fd3388c067458785b34b107f6e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!50 &302777437
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 302777431}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &454590682
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,6 +325,7 @@ GameObject:
   - component: {fileID: 454590686}
   - component: {fileID: 454590685}
   - component: {fileID: 454590684}
+  - component: {fileID: 454590690}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -276,7 +406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a36ab8cb5270ab745a94751805acb9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedOnSnow: 1
+  speedOnSnow: 5
   onSnow: 0
 --- !u!114 &454590687
 MonoBehaviour:
@@ -338,6 +468,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 454590682}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &454590690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 454590682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d210810d76cbad43aca608a8d2e6137, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammo: {fileID: 302777431}
+  snowBallSpeed: 750
+  shootingOffset: 1
 --- !u!1 &457808607
 GameObject:
   m_ObjectHideFlags: 0
@@ -372,6 +517,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamNumber: 0
+  teamColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!61 &457808609
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -512,6 +658,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamNumber: 1
+  teamColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!61 &477054832
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -715,6 +862,7 @@ GameObject:
   - component: {fileID: 745141030}
   - component: {fileID: 745141029}
   - component: {fileID: 745141028}
+  - component: {fileID: 745141034}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -795,7 +943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a36ab8cb5270ab745a94751805acb9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedOnSnow: 1
+  speedOnSnow: 5
   onSnow: 0
 --- !u!114 &745141031
 MonoBehaviour:
@@ -857,6 +1005,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745141026}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &745141034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745141026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d210810d76cbad43aca608a8d2e6137, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammo: {fileID: 302777431}
+  snowBallSpeed: 750
+  shootingOffset: 1
 --- !u!1 &902971459
 GameObject:
   m_ObjectHideFlags: 0
@@ -915,11 +1078,12 @@ GameObject:
   - component: {fileID: 1713115716}
   - component: {fileID: 1713115715}
   - component: {fileID: 1713115714}
-  - component: {fileID: 1713115717}
   - component: {fileID: 1713115719}
-  - component: {fileID: 1713115720}
   - component: {fileID: 1713115713}
+  - component: {fileID: 1713115720}
   - component: {fileID: 1713115718}
+  - component: {fileID: 1713115717}
+  - component: {fileID: 1713115721}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -1074,6 +1238,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7456025d48229b4883f75206f566ab6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1713115721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713115712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d210810d76cbad43aca608a8d2e6137, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammo: {fileID: 302777431}
+  snowBallSpeed: 750
+  shootingOffset: 1
 --- !u!1 &2114111741
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,6 +1268,7 @@ GameObject:
   - component: {fileID: 2114111745}
   - component: {fileID: 2114111744}
   - component: {fileID: 2114111743}
+  - component: {fileID: 2114111749}
   m_Layer: 0
   m_Name: Cube (3)
   m_TagString: Untagged
@@ -1169,7 +1349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a36ab8cb5270ab745a94751805acb9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedOnSnow: 1
+  speedOnSnow: 5
   onSnow: 0
 --- !u!114 &2114111746
 MonoBehaviour:
@@ -1231,3 +1411,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2114111741}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2114111749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114111741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d210810d76cbad43aca608a8d2e6137, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammo: {fileID: 302777431}
+  snowBallSpeed: 750
+  shootingOffset: 1

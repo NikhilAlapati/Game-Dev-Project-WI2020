@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class Team
-{
-    PlayerManager playerManager;
-
-    private int teamNumber;
+public class Team : MonoBehaviour
+{   
+    public int teamNumber;
     private bool active;
 
     private int totalMembers = 0;
@@ -18,9 +17,16 @@ public class Team
     public int roundWins = 0;
     public int roundLosses = 0;
 
-    public Team(PlayerManager playerManager, int teamNumber)
+    public Color teamColor;
+    public Text scoreboard;
+
+    private void Start()
     {
-        this.playerManager = playerManager;
+        teamColor = GetComponent<Renderer>().material.color;
+    }
+
+    public Team(int teamNumber)
+    {
         this.teamNumber = teamNumber;
         this.active = true;
     }
@@ -63,7 +69,7 @@ public class Team
 
         this.active = false;
         ++roundLosses;
-        playerManager.TeamLostRound(this.teamNumber);
+        PlayerManager.Instance.TeamLostRound(this.teamNumber);
         // TODO: call game manager
         Debug.Log("Team lost");
     }
@@ -71,6 +77,10 @@ public class Team
     public void teamWonRound()
     {
         ++roundWins;
+        if (scoreboard != null)
+            scoreboard.text = roundWins.ToString();
+        else
+            Debug.Log("scoreboard is not set team number: " + teamNumber);
     }
 
     public void teamLostGame()
