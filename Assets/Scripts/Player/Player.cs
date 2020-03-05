@@ -216,6 +216,7 @@ public class Player : MonoBehaviour
 
     public void fullRevive()
     {
+        playerHealth = maxHealth;
         revivePlayer(maxHealth);
     }
 
@@ -223,8 +224,10 @@ public class Player : MonoBehaviour
     {
         reviving = false;
         playerHealth += healthAmount;
+        if (playerHealth > maxHealth)
+            playerHealth = maxHealth;
         if (!isAbSnowman)
-            snowmanMelt.UpdateMeltStatus(playerHealth);
+            GetComponent<SnowmanMelt>().UpdateMeltStatus(playerHealth);
 
         if (!isAlive)
         {

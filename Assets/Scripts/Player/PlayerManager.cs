@@ -132,6 +132,7 @@ public class PlayerManager : MonoBehaviour
 
     public void StartNewRoundTimer()
     {
+        ReviveAllPlayers();
         countDownSeconds = 3;
         countDownNumber.text = countDownSeconds.ToString();
         isCountDown = true;
@@ -150,7 +151,7 @@ public class PlayerManager : MonoBehaviour
     {
         foreach(Player player in players)
         {
-            player.fullRevive();
+            player.slowRevive(1);
         }
     }
 
@@ -171,6 +172,12 @@ public class PlayerManager : MonoBehaviour
         {
             Debug.Log("Team " + winningTeam + " has won");
             teams[winningTeam].teamWonRound();
+        }
+        else if (teamsRemaining == 0)
+        {
+            Debug.Log("Nobody wins, since there are 0 teams remaining");
+            StartNewRoundTimer();
+
         }
     }
 }
