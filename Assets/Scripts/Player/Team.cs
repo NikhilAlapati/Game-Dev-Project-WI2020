@@ -22,7 +22,8 @@ public class Team : MonoBehaviour
 
     private void Start()
     {
-        teamColor = GetComponent<Renderer>().material.color;
+        teamColor = new Color(0.8f, 0.8f, 0.8f);
+        teamColor += GetComponent<Renderer>().material.color;
     }
 
     public Team(int teamNumber)
@@ -94,9 +95,5 @@ public class Team : MonoBehaviour
     {
         ++gameWins;
     }
-
-
-    
-
 
 }

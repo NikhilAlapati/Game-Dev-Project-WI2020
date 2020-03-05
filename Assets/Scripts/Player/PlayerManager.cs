@@ -150,7 +150,7 @@ public class PlayerManager : MonoBehaviour
     {
         foreach(Player player in players)
         {
-            player.revivePlayer();
+            player.fullRevive();
         }
     }
 

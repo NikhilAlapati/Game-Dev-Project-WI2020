@@ -13,6 +13,7 @@ public class ShootingController : MonoBehaviour
     public GameObject reticle;
     public float reticleOffset = 2f;
     private PlayerMovement playerMovement;
+    private SnowmanMelt snowmanMelt;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,11 +22,16 @@ public class ShootingController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         playerMovement = GetComponent<PlayerMovement>();
+        if (!player.isAbSnowman)
+            snowmanMelt = GetComponent<SnowmanMelt>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!player.isAlive)
+            return;
+
         if (Input.GetButtonDown(player.getInputName(Player.InputName.RightBumper)))
         {
             ThrowSnowball();
@@ -49,7 +55,12 @@ public class ShootingController : MonoBehaviour
     private void ThrowSnowball()
     {
         Debug.Assert(ammo != null);
-        anim.SetTrigger("Throw");
+        if (player.isAbSnowman)
+            anim.SetTrigger("Throw");
+
+        else
+            player.damagePlayer(1);
+
 
 
         // direction to throw snowball
@@ -79,13 +90,21 @@ public class ShootingController : MonoBehaviour
     {
         if (rightStick.y > 0)
         {
-            anim.SetBool("FacingForward", false);
-            playerMovement.facingForward = false;
+            if (player.isAbSnowman)
+                anim.SetBool("FacingForward", false);
+            else
+                snowmanMelt.FaceDirection(false);
+
+            playerMovement.facingUp = false;
         }
         else if (rightStick.y < 0)
         {
-            anim.SetBool("FacingForward", true);
-            playerMovement.facingForward = true;
+            if (player.isAbSnowman)
+                anim.SetBool("FacingForward", true);
+            else
+                snowmanMelt.FaceDirection(true);
+
+            playerMovement.facingUp = true;
         }
 
     }

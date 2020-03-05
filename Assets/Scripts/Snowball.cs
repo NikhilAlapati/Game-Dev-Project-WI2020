@@ -5,7 +5,7 @@ using UnityEngine;
 public class Snowball : MonoBehaviour
 {
 
-    public int damage = 50;
+    public int damage = 1;
     public Player thrower;
     public Team team;
 

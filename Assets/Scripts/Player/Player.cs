@@ -8,8 +8,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int playerHealth = 100;
-    public int startHealth = 100;
+    public int playerHealth = 5;
+    public int maxHealth = 5;
     public int ammoCount = 50;
 
     // the controller number assigned by Unity's Input Controller
@@ -23,10 +23,19 @@ public class Player : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     public bool isAlive = true;
+    public bool reviving = false;
+    public bool isAbSnowman = true;
+    private SnowmanMelt snowmanMelt;
+    private Animator anim;
+    private Rigidbody2D rb;
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
+        if (!isAbSnowman)
+            snowmanMelt = GetComponent<SnowmanMelt>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
@@ -81,14 +90,28 @@ public class Player : MonoBehaviour
 
     }
 
-    private void hitBySnowball(Snowball snowBall)
+    private void hitBySnowball(Snowball snowball)
     {
-        if (snowBall.thrower == this)
+        if (isAbSnowman)
+            AbSnowmanHitBySnowball(snowball);
+        else
+            SnowmanHitBySnowBall(snowball);
+
+    }
+
+    private void SnowmanHitBySnowBall(Snowball snowball)
+    {
+        healPlayer(snowball.damage);
+    }
+
+    private void AbSnowmanHitBySnowball(Snowball snowball)
+    {
+        if (snowball.thrower == this)
             return;
-        if (snowBall.thrower.currentTeam == this.currentTeam) // no friendly fire at the moment
+        if (snowball.thrower.currentTeam == this.currentTeam) // no friendly fire at the moment
             return;
 
-        damagePlayer(snowBall.damage);
+        damagePlayer(snowball.damage);
     }
 
 
@@ -139,37 +162,91 @@ public class Player : MonoBehaviour
             return;
 
         this.playerHealth -= damage;
+
+        
         if (this.playerHealth < 0)
             killPlayer();
+
+        else if (!isAbSnowman)
+            snowmanMelt.UpdateMeltStatus(playerHealth);
+    }
+
+    public void healPlayer(int healthIncrease)
+    {
+        if (!isAlive && isAbSnowman)
+            return;
+        else if (!isAbSnowman)
+        {
+            revivePlayer(0);
+        }
+        // already at max
+        if (playerHealth >= maxHealth)
+            return;
+        playerHealth += healthIncrease;
+        // can't go higher than max
+        if (playerHealth > maxHealth)
+            playerHealth = maxHealth;
+        if (!isAbSnowman)
+            snowmanMelt.UpdateMeltStatus(playerHealth);
     }
 
     private void killPlayer()
     {
         Debug.Log("Player " + this.playerNumber + " is dead");
+        rb.velocity = Vector2.zero;
         isAlive = false;
+        if (currentTeam == null)
+        {
+            slowRevive(3);
+            return;
+        }
         currentTeam.memberDied();
         // Play death animation
         spriteRenderer.color = Color.gray;
     }
 
-    public void revivePlayer()
+    public void slowRevive(float seconds)
     {
-        playerHealth = startHealth;
+        if (!reviving && !isAlive)
+        {
+            reviving = true;
+            Invoke("fullRevive", seconds);
+        }
+    }
 
-        if (currentTeam == null)
-            return;
+    public void fullRevive()
+    {
+        revivePlayer(maxHealth);
+    }
+
+    public void revivePlayer(int healthAmount)
+    {
+        reviving = false;
+        playerHealth += healthAmount;
+        if (!isAbSnowman)
+            snowmanMelt.UpdateMeltStatus(playerHealth);
+
         if (!isAlive)
         {
-            currentTeam.memberRevived();
+            if (currentTeam != null)
+            {
+                currentTeam.memberRevived();
+                spriteRenderer.color = currentTeam.teamColor;
+            }
+            else
+            {
+                spriteRenderer.color = Color.white;
+            }
             isAlive = true;
         }
+        if (!isAbSnowman)
+            snowmanMelt.UpdateMeltStatus(playerHealth);
 
-        spriteRenderer.color = currentTeam.teamColor;
     }
 
     public float getHealthPercentage()
     {
-        return this.playerHealth / this.startHealth * 100;
+        return this.playerHealth / this.maxHealth * 100;
     }
 
     public int getAmmoCount()

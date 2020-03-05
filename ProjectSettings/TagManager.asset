@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - IceTile
   layers:
   - Default
   - TransparentFX
@@ -13,12 +14,12 @@ TagManager:
   - UI
   - 
   - 
+  - IceTile
+  - Tree
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - AbSnowman
+  - Snowman
   - 
   - 
   - 
@@ -40,4 +41,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Tiles
+    uniqueID: 2336917857
+    locked: 0
+  - name: Player
+    uniqueID: 2737081745
+    locked: 0
+  - name: Trees
+    uniqueID: 3701264595
     locked: 0

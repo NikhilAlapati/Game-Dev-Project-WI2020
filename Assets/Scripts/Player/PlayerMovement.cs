@@ -7,11 +7,12 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     public float speedOnSnow=1;
     private float speedOnIce;
-    public bool onSnow;
+    private bool onSnow = false;
     private SpriteRenderer spriteRenderer;
-    private Player playerParent;
+    private Player player;
     private Animator anim;
-    public bool facingForward = true;
+    public bool facingUp = true;
+    private SnowmanMelt snowmanMelt;
 
     // Start is called before the first frame update
     void Start()
@@ -21,15 +22,20 @@ public class PlayerMovement : MonoBehaviour
         //set at start because cant initalize the value beforehand
         speedOnIce = speedOnSnow*2;
         spriteRenderer = GetComponent<SpriteRenderer>();
-        this.playerParent = GetComponentInParent<Player>();
+        player = GetComponentInParent<Player>();
         anim = GetComponent<Animator>();
         //Debug.Assert(anim != null, "Must have an animator component for movement");
+        if (!player.isAbSnowman)
+            snowmanMelt = GetComponent<SnowmanMelt>();
     }
 
 
     // Update is called once per frame
     void Update()
     {
+        if (!player.isAlive)
+            return;
+
         float moveX, moveY;
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -38,32 +44,44 @@ public class PlayerMovement : MonoBehaviour
         float actualSpeed;
         if (onSnow)
         {
-            moveX = Input.GetAxisRaw(playerParent.getInputName(Player.InputName.LeftHorizontal));
-            moveY = Input.GetAxisRaw(playerParent.getInputName(Player.InputName.LeftVertical));
+            moveX = Input.GetAxisRaw(player.getInputName(Player.InputName.LeftHorizontal));
+            moveY = Input.GetAxisRaw(player.getInputName(Player.InputName.LeftVertical));
             actualSpeed = speedOnSnow;
         }
         else
         {
-            Debug.Assert(playerParent != null);
-            moveX = Input.GetAxis(playerParent.getInputName(Player.InputName.LeftHorizontal));
-            moveY = Input.GetAxis(playerParent.getInputName(Player.InputName.LeftVertical));
+            Debug.Assert(player != null);
+            moveX = Input.GetAxis(player.getInputName(Player.InputName.LeftHorizontal));
+            moveY = Input.GetAxis(player.getInputName(Player.InputName.LeftVertical));
 
             //moveY = Input.GetAxis("Vertical");
             actualSpeed = speedOnIce;
         }
-
-        //transform.localScale = Vector3.one + new Vector3(Input.GetAxis("P" + playerNumber + "Fire1"), 0, 0);
-
-        //material.color = new Color(Input.GetAxis("P" + playerNumber + "Fire1"), 1, 1);
-        if (moveY < 0 && !facingForward)
+        //Debug.Log("actual speed: " + actualSpeed);
+        if (!player.isAbSnowman)
         {
-            anim.SetBool("FacingForward", true);
-            facingForward = true;
+            actualSpeed *= 7 / (float)(player.playerHealth + 8);
+            if (actualSpeed < 0)
+                actualSpeed = 0;
+            //Debug.Log("act speed after calc: " + actualSpeed);
         }
-        else if (moveY > 0 && facingForward)
+
+        if (moveY < 0 && !facingUp)
         {
-            anim.SetBool("FacingForward", false);
-            facingForward = false;
+            if (!player.isAbSnowman)
+                snowmanMelt.FaceDirection(true);
+            else
+                anim.SetBool("FacingForward", true);
+
+            facingUp = true;
+        }
+        else if (moveY > 0 && facingUp)
+        {
+            if (!player.isAbSnowman)
+                snowmanMelt.FaceDirection(false);
+            else
+                anim.SetBool("FacingForward", false);
+            facingUp = false;
         }
 
         rb.velocity = new Vector2(moveX * actualSpeed, moveY * actualSpeed);
@@ -75,4 +93,10 @@ public class PlayerMovement : MonoBehaviour
         rb.angularVelocity = 0f;
         transform.forward = Vector3.forward;
     }
+
+    public void SetOnSnow(bool isOnSnow)
+    {
+        onSnow = isOnSnow;
+    }
+    
 }
