@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Snowball : MonoBehaviour
 {
+
     public int damage = 50;
+    public Player thrower;
+    public Team team;
 
     private void Start()
     {

@@ -20,13 +20,13 @@ public class Player : MonoBehaviour
     private int teamNumber { get; set; }
     private Team currentTeam;
 
-    private Material material;
+    private SpriteRenderer spriteRenderer;
 
     public bool isAlive = true;
 
     private void Start()
     {
-        material = GetComponent<Renderer>().material;
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -60,14 +60,13 @@ public class Player : MonoBehaviour
             currentTeam.removeMember(this);
 
         this.teamNumber = team.teamNumber;
-        material.color = team.teamColor;
+        spriteRenderer.color = team.teamColor;
         currentTeam = GetComponentInParent<PlayerManager>().GetTeam(this.teamNumber);
         currentTeam.addMember();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("2d collision trigger enter");
         Team teamAssignment = collision.gameObject.GetComponent<Team>();
 
         if (teamAssignment != null && teamAssignment != currentTeam)
@@ -78,8 +77,18 @@ public class Player : MonoBehaviour
     {
         Snowball snowBall = collision.gameObject.GetComponent<Snowball>();
         if (snowBall != null)
-            damagePlayer(snowBall.damage);
+            hitBySnowball(snowBall);
 
+    }
+
+    private void hitBySnowball(Snowball snowBall)
+    {
+        if (snowBall.thrower == this)
+            return;
+        if (snowBall.thrower.currentTeam == this.currentTeam) // no friendly fire at the moment
+            return;
+
+        damagePlayer(snowBall.damage);
     }
 
 
@@ -140,7 +149,7 @@ public class Player : MonoBehaviour
         isAlive = false;
         currentTeam.memberDied();
         // Play death animation
-        material.color = Color.gray;
+        spriteRenderer.color = Color.gray;
     }
 
     public void revivePlayer()
@@ -155,7 +164,7 @@ public class Player : MonoBehaviour
             isAlive = true;
         }
 
-        material.color = currentTeam.teamColor;
+        spriteRenderer.color = currentTeam.teamColor;
     }
 
     public float getHealthPercentage()

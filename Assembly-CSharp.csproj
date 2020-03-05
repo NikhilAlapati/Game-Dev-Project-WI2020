@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\Player\Team.cs" />
     <Compile Include="Assets\Scripts\ShootingController.cs" />
     <Compile Include="Assets\Scripts\Snowball.cs" />
+    <Compile Include="Assets\ShootingReticle.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/JoshJ/source/repos/Unity2D/Game-Dev-Project-WI2020/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>

@@ -101,7 +101,6 @@ public class PlayerManager : MonoBehaviour
         for (int playerNumber = 0; playerNumber < players.Length; playerNumber++)
         {
             // if player is unassigned
-            Debug.Log(playerNumber + " is the playerNumber");
             if (!players[playerNumber].gameObject.activeInHierarchy)
             {
                 // activate the player object

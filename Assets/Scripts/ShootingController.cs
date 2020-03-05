@@ -7,59 +7,112 @@ public class ShootingController : MonoBehaviour
     private Player player;
     public GameObject ammo;
     public float snowBallSpeed = 1000f;
-    public float shootingOffset;
+    public float shootingOffset = 1f;
     private Rigidbody2D rb;
+    private Animator anim;
+    public GameObject reticle;
+    public float reticleOffset = 2f;
+    private PlayerMovement playerMovement;
     // Start is called before the first frame update
     void Start()
     {
         Debug.Assert(ammo != null);
         player = GetComponent<Player>();
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        playerMovement = GetComponent<PlayerMovement>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        UpdateRotation();
-
         if (Input.GetButtonDown(player.getInputName(Player.InputName.RightBumper)))
         {
             ThrowSnowball();
         }
+
+        Vector2 rightStick = getRightStick();
+        updatePlayerDirection(rightStick);
+        updateReticlePosition(rightStick);
+        updateReticleRotation(rightStick);
     }
 
-    private void UpdateRotation()
+    private Vector2 getRightStick()
     {
-        Vector2 rightStick = new Vector2(
+        return new Vector2(
             Input.GetAxis(player.getInputName(Player.InputName.RightHorizontal)),
             Input.GetAxis(player.getInputName(Player.InputName.RightVertical))
             );
 
-        float angularVelocity = 12f;
-
-        var direction = new Vector3(rightStick.x, rightStick.y, 0);
-
-
-        float radialDeadZone = 0.25f;
-        if (direction.magnitude > radialDeadZone)
-        {
-            rb.angularVelocity = 0f;
-            var currentRotation = Quaternion.LookRotation(Vector3.forward, direction);
-            transform.rotation = Quaternion.Lerp(transform.rotation, currentRotation, Time.deltaTime * angularVelocity);
-        }
     }
 
     private void ThrowSnowball()
     {
         Debug.Assert(ammo != null);
-        Vector3 spawnPosition = transform.up * shootingOffset;
-        
-        GameObject snowball = Instantiate(ammo, transform.position + spawnPosition, transform.rotation);
-        Rigidbody2D snowballRb = snowball.GetComponent<Rigidbody2D>();
+        anim.SetTrigger("Throw");
 
+
+        // direction to throw snowball
+        Vector3 spawnPosition = reticle.transform.position;
+        Vector3 heading  = reticle.transform.position - transform.position;
+
+        updatePlayerDirection(heading);
+
+
+        // constant distance from player
+        heading.Normalize();
+        heading *= shootingOffset;
+
+        // new snowball
+        GameObject snowball = Instantiate(ammo, transform.position + heading, reticle.transform.rotation);
+        // set thrower to avoid self-damage and friendly-fire
+        snowball.GetComponent<Snowball>().thrower = player;
+
+        // give the snowball a relative velocity based on the player's velocity
+        Rigidbody2D snowballRb = snowball.GetComponent<Rigidbody2D>();
         snowballRb.velocity = rb.velocity;
         Vector3 motion = snowballRb.transform.up * snowBallSpeed;
         snowballRb.AddForce(new Vector2(motion.x, motion.y));
+    }
+
+    private void updatePlayerDirection(Vector2 rightStick)
+    {
+        if (rightStick.y > 0)
+        {
+            anim.SetBool("FacingForward", false);
+            playerMovement.facingForward = false;
+        }
+        else if (rightStick.y < 0)
+        {
+            anim.SetBool("FacingForward", true);
+            playerMovement.facingForward = true;
+        }
+
+    }
+
+    private void updateReticlePosition(Vector2 rightStick)
+    {
+        Vector3 displacement = new Vector3(rightStick.x, rightStick.y, 0);
+        if (rightStick.x == 0 && rightStick.y == 0)
+            return;
+
+        displacement.Normalize();
+        displacement *= reticleOffset;
+        reticle.transform.position = transform.position + displacement;
+    }
+
+    private void updateReticleRotation(Vector2 rightStick)
+    {
+        float angularVelocity = 12f;
+
+        var direction = new Vector3(rightStick.x, rightStick.y, 0);
+
+        float radialDeadZone = 0.25f;
+        if (direction.magnitude > radialDeadZone)
+        {
+            var currentRotation = Quaternion.LookRotation(Vector3.forward, direction);
+            reticle.transform.rotation = Quaternion.Lerp(reticle.transform.rotation, currentRotation, Time.deltaTime * angularVelocity);
+        }
     }
 
 }
