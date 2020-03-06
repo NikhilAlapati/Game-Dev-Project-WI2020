@@ -17,6 +17,8 @@ public class Snowball : MonoBehaviour
     public AudioClip[] wallHitSounds;
     public SoundPool wallHitSoundPool = new SoundPool();
 
+    private Rigidbody2D rb;
+
     private bool alreadyHit = false;
 
     private void Start()
@@ -26,7 +28,8 @@ public class Snowball : MonoBehaviour
 
         anim = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
-        Invoke("Explode", 1f);
+        Invoke("Drop", 1f);
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -34,12 +37,9 @@ public class Snowball : MonoBehaviour
         if (alreadyHit)
             return;
 
-        // hitting a player or another snowball
-        if (collision.gameObject.GetComponent<Player>() != null || collision.gameObject.GetComponent<Snowball>() != null)
+        // hitting a player or another snowball or wall
+        if (collision.gameObject.GetComponent<Player>() != null || collision.gameObject.GetComponent<Snowball>() != null || collision.gameObject.CompareTag("wall"))
             audioSource.clip = playerHitSoundPool.GetRandomSound();
-        // hitting a wall
-        else if (collision.gameObject.CompareTag("wall"))
-            audioSource.clip = wallHitSoundPool.GetRandomSound();
         // disregard
         else
         {
@@ -51,10 +51,17 @@ public class Snowball : MonoBehaviour
         Explode();
     }
 
+    private void Drop()
+    {
+        // slows the snowball down as if it hit the ground
+        rb.velocity = rb.velocity * 0.2f;
+        Explode();
+    }
+
     private void Explode()
     {
         // play sound
-        GetComponent<Rigidbody2D>().freezeRotation = true;
+        rb.freezeRotation = true;
         transform.Rotate(Vector3.forward, Random.Range(0, 360));
         anim.SetTrigger("Explode");
     }

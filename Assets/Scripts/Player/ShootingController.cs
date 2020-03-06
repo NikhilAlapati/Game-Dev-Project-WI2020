@@ -6,6 +6,8 @@ public class ShootingController : MonoBehaviour
 {
     private Player player;
     public GameObject ammo;
+    public int ammoCount = 0;
+    public int maxAmmo = 5;
     public float snowBallSpeed = 1000f;
     public float shootingOffset = 1f;
     private Rigidbody2D rb;
@@ -14,6 +16,18 @@ public class ShootingController : MonoBehaviour
     public float reticleOffset = 2f;
     private PlayerMovement playerMovement;
     private SnowmanMelt snowmanMelt;
+
+    public GameObject iceTile;
+    public Grid grid;
+    public int currentCollisionCount = 0;
+
+    public bool currentlyColiding = false;
+
+    private bool LeftBumperDown = false;
+
+    private AudioSource audioSource;
+    public AudioClip pickupSound;
+    public AudioClip throwSound;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +38,7 @@ public class ShootingController : MonoBehaviour
         playerMovement = GetComponent<PlayerMovement>();
         if (!player.isAbSnowman)
             snowmanMelt = GetComponent<SnowmanMelt>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -31,6 +46,18 @@ public class ShootingController : MonoBehaviour
     {
         if (!player.isAlive)
             return;
+
+        if (LeftBumperDown)
+            LeftBumperDown = false;
+        else if (!LeftBumperDown && Input.GetAxisRaw(player.getInputName(Player.InputName.LeftBumper)) != 0)
+            LeftBumperDown = true;
+
+        if (playerMovement.GetOnSnow()
+            && Input.GetButtonDown(player.getInputName(Player.InputName.LeftBumper)))
+        {
+            PickupSnow();
+        }
+
 
         if (Input.GetButtonDown(player.getInputName(Player.InputName.RightBumper)))
         {
@@ -54,6 +81,13 @@ public class ShootingController : MonoBehaviour
 
     private void ThrowSnowball()
     {
+        if (player.isAbSnowman && ammoCount < 1)
+        {
+            // out of ammo sound
+            return;
+        }
+        --ammoCount;
+
         Debug.Assert(ammo != null);
         if (player.isAbSnowman)
             anim.SetTrigger("Throw");
@@ -84,6 +118,12 @@ public class ShootingController : MonoBehaviour
         snowballRb.velocity = rb.velocity;
         Vector3 motion = snowballRb.transform.up * snowBallSpeed;
         snowballRb.AddForce(new Vector2(motion.x, motion.y));
+
+        if (throwSound != null)
+        {
+            audioSource.clip = throwSound;
+            audioSource.Play();
+        }
     }
 
     private void updatePlayerDirection(Vector2 rightStick)
@@ -132,6 +172,39 @@ public class ShootingController : MonoBehaviour
             var currentRotation = Quaternion.LookRotation(Vector3.forward, direction);
             reticle.transform.rotation = Quaternion.Lerp(reticle.transform.rotation, currentRotation, Time.deltaTime * angularVelocity);
         }
+    }
+
+    public void PickupSnow()
+    {
+        Debug.Assert(iceTile != null, "Must hook up snow tile");
+        if (currentCollisionCount > 0)
+            return;
+        if (ammoCount > maxAmmo)
+            return;
+
+
+
+        GameObject snowball = Instantiate(iceTile);
+        iceTile.transform.position = grid.WorldToCell(transform.position);
+        ++ammoCount;
+        if (!player.isAbSnowman)
+        {
+            player.healPlayer(1);
+        }
+        if (pickupSound != null)
+        {
+            audioSource.clip = pickupSound;
+            audioSource.PlayOneShot(pickupSound, 0.5f);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        ++currentCollisionCount;
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        --currentCollisionCount;
     }
 
 }

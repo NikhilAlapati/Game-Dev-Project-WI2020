@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 {
     public int playerHealth = 5;
     public int maxHealth = 5;
-    public int ammoCount = 50;
+    //public int ammoCount = 50;
 
     // the controller number assigned by Unity's Input Controller
     private int controllerNumber { get; set; }
@@ -28,6 +28,8 @@ public class Player : MonoBehaviour
     private SnowmanMelt snowmanMelt;
     private Animator anim;
     private Rigidbody2D rb;
+    public AudioClip deathSound;
+    private AudioSource audioSource;
 
     private void Start()
     {
@@ -36,6 +38,7 @@ public class Player : MonoBehaviour
         if (!isAbSnowman)
             snowmanMelt = GetComponent<SnowmanMelt>();
         rb = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -53,7 +56,7 @@ public class Player : MonoBehaviour
         LeftFace, RightFace, TopFace, DownFace,
         LeftHorizontal, LeftVertical,
         RightHorizontal, RightVertical,
-        RightBumper
+        LeftBumper, RightBumper
     }
 
     public string getInputName(InputName inputName)
@@ -71,7 +74,10 @@ public class Player : MonoBehaviour
         this.teamNumber = team.teamNumber;
         spriteRenderer.color = team.teamColor;
         currentTeam = GetComponentInParent<PlayerManager>().GetTeam(this.teamNumber);
-        currentTeam.addMember();
+
+        // only abSnowman players are important for wins/losses
+        if (isAbSnowman)
+            currentTeam.addMember();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -108,7 +114,7 @@ public class Player : MonoBehaviour
     {
         if (snowball.thrower == this)
             return;
-        if (snowball.thrower.currentTeam == this.currentTeam) // no friendly fire at the moment
+        if (this.currentTeam != null && snowball.thrower.currentTeam == this.currentTeam) // no friendly fire at the moment
             return;
 
         damagePlayer(snowball.damage);
@@ -139,22 +145,6 @@ public class Player : MonoBehaviour
         this.controllerNumber = number;
     }
 
-
-    public void increaseAmmo(int amount)
-    {
-        this.ammoCount += amount;
-    }
-
-    public bool decreaseAmmo(int amount)
-    {
-        if (this.ammoCount - amount < 0)
-            return false;
-        else
-        {
-            this.ammoCount -= amount;
-            return true;
-        }
-    }
 
     public void damagePlayer(int damage)
     {
@@ -195,14 +185,23 @@ public class Player : MonoBehaviour
         Debug.Log("Player " + this.playerNumber + " is dead");
         rb.velocity = Vector2.zero;
         isAlive = false;
+        if (deathSound != null)
+        {
+            audioSource.clip = deathSound;
+            audioSource.PlayOneShot(deathSound, 0.5f);
+        }
+        spriteRenderer.color = Color.gray;
         if (currentTeam == null)
         {
             slowRevive(3);
             return;
         }
-        currentTeam.memberDied();
+        // only abSnowman players are important for wins/losses
+        if (isAbSnowman)
+            currentTeam.memberDied();
         // Play death animation
-        spriteRenderer.color = Color.gray;
+        
+        
     }
 
     public void slowRevive(float seconds)
@@ -233,7 +232,9 @@ public class Player : MonoBehaviour
         {
             if (currentTeam != null)
             {
-                currentTeam.memberRevived();
+                if (isAbSnowman)
+                    currentTeam.memberRevived();
+
                 spriteRenderer.color = currentTeam.teamColor;
             }
             else
@@ -247,14 +248,17 @@ public class Player : MonoBehaviour
 
     }
 
+    public void respawn()
+    {
+        if (currentTeam == null)
+            transform.position = PlayerManager.Instance.transform.position;
+        else
+            transform.position = currentTeam.getSpawnPoint();
+    }
+
     public float getHealthPercentage()
     {
         return this.playerHealth / this.maxHealth * 100;
-    }
-
-    public int getAmmoCount()
-    {
-        return this.ammoCount;
     }
 
 }

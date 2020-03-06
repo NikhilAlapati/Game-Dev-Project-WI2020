@@ -143,6 +143,7 @@ public class PlayerManager : MonoBehaviour
         ++roundCount;
         Debug.Log("Round " + roundCount + " has begun");
         ReviveAllPlayers();
+        RespawnAllPlayers();
         foreach (Team team in teams)
             team.activateTeam();
     }
@@ -151,7 +152,15 @@ public class PlayerManager : MonoBehaviour
     {
         foreach(Player player in players)
         {
-            player.slowRevive(1);
+            player.slowRevive(0.1f);
+        }
+    }
+
+    public void RespawnAllPlayers()
+    {
+        foreach (Player player in players)
+        {
+            player.respawn();
         }
     }
 
@@ -172,6 +181,7 @@ public class PlayerManager : MonoBehaviour
         {
             Debug.Log("Team " + winningTeam + " has won");
             teams[winningTeam].teamWonRound();
+            StartNewRoundTimer();
         }
         else if (teamsRemaining == 0)
         {

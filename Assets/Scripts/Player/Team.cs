@@ -20,10 +20,14 @@ public class Team : MonoBehaviour
     public Color teamColor;
     public Text scoreboard;
 
+    public Transform[] spawnPoints;
+    public int spawnIndex = 0;
+
     private void Start()
     {
         teamColor = new Color(0.8f, 0.8f, 0.8f);
         teamColor += GetComponent<Renderer>().material.color;
+        spawnPoints = GetComponentsInChildren<Transform>();
     }
 
     public Team(int teamNumber)
@@ -94,6 +98,16 @@ public class Team : MonoBehaviour
     public void teamWonGame()
     {
         ++gameWins;
+    }
+
+    public Vector3 getSpawnPoint()
+    {
+        if (spawnIndex >= spawnPoints.Length - 1)
+            spawnIndex = 0;
+        else
+            ++spawnIndex;
+        Debug.Log("spawn index: " + spawnIndex);
+        return spawnPoints[spawnIndex].position;
     }
 
 }

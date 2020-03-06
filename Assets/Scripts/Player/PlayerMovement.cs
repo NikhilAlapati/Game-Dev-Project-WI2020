@@ -7,12 +7,17 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     public float speedOnSnow=1;
     private float speedOnIce;
-    private bool onSnow = false;
+    public bool onSnow = true;
     private SpriteRenderer spriteRenderer;
     private Player player;
     private Animator anim;
     public bool facingUp = true;
     private SnowmanMelt snowmanMelt;
+
+    private AudioSource audioSource;
+    public AudioClip walkingSoundSnow;
+    public AudioClip walkingSoundIce;
+    private int walkingTicks;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +32,8 @@ public class PlayerMovement : MonoBehaviour
         //Debug.Assert(anim != null, "Must have an animator component for movement");
         if (!player.isAbSnowman)
             snowmanMelt = GetComponent<SnowmanMelt>();
+
+        audioSource = GetComponent<AudioSource>();
     }
 
 
@@ -85,6 +92,23 @@ public class PlayerMovement : MonoBehaviour
         }
 
         rb.velocity = new Vector2(moveX * actualSpeed, moveY * actualSpeed);
+
+        if (rb.velocity != Vector2.zero)
+        {
+            ++walkingTicks;
+           
+        }
+        if (walkingTicks >= 20)
+        {
+            walkingTicks = 0;
+
+            if (onSnow)
+                audioSource.clip = walkingSoundSnow;
+            else
+                audioSource.clip = walkingSoundIce;
+            audioSource.Play();
+        }
+
     }
 
     // keeps the player facing forward instead of spinning on collisions
@@ -98,5 +122,11 @@ public class PlayerMovement : MonoBehaviour
     {
         onSnow = isOnSnow;
     }
-    
+
+    public bool GetOnSnow()
+    {
+        return onSnow;
+    }
+
+
 }
