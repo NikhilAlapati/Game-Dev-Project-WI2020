@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\Snowball.cs" />
     <Compile Include="Assets\Scripts\SnowmanMelt.cs" />
     <Compile Include="Assets\Scripts\TitleMenu.cs" />
+    <Compile Include="Assets\SoundPool.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/JoshJ/source/repos/Unity2D/Game-Dev-Project-WI2020/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
